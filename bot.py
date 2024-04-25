@@ -11,7 +11,6 @@ __rss_chat_id__ = '-1002000518192'
 __rss_chan_id__ = None
 
 
-
 async def send_message_func(title: str, min_name: str, date: str, content: str, link: str):
     global bot
 

@@ -136,6 +136,19 @@ min_urls = [
 ]
 
 
+def stop_filter(title: str, content: str) -> bool:
+    if len(title) < 30 or len(content) < 300:
+        return True
+
+    blacklist = ['информирует', 'анонс', 'погода', 'погоды', 'погодны', 'приглашает', 'приглашают',
+                 'приглашаем', 'субботник', 'уборк', 'конкурс']
+
+    if any(b_word in str(title).lower() for b_word in blacklist):
+        return True
+
+    return False
+
+
 def get_all_news_urls(url: str, date: str) -> []:
     url = url.strip()
 
@@ -194,6 +207,12 @@ async def start_min_parser(send_news_func):
 
                 title = get_title_from_url(link)
                 content = get_text_from_url(link)
+
+                if content is None or title is None:
+                    continue
+
+                if stop_filter(title=str(title), content=str(content)):
+                    continue
 
                 await send_news_func(
                     title=title.strip(),
