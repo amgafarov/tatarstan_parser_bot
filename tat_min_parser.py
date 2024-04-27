@@ -1,8 +1,9 @@
-import time
+import asyncio
 from requests import get
 import re
 from datetime import datetime
 from text_scrapper import get_text_from_url, get_title_from_url
+from yandex_gpt_request import get_response_mark
 
 min_urls = [
     ['https://eco.tatarstan.ru/', 'Министерство экологии Республики Татарстан'],
@@ -150,6 +151,7 @@ def stop_filter(title: str, content: str) -> bool:
 
 
 def get_all_news_urls(url: str, date: str) -> []:
+
     url = url.strip()
 
     if not url.startswith('https://'):
@@ -214,12 +216,18 @@ async def start_min_parser(send_news_func):
                 if stop_filter(title=str(title), content=str(content)):
                     continue
 
+                mark = get_response_mark(text=title+'\n\n'+content)
+
+                if mark < 8:
+                    continue
+
                 await send_news_func(
                     title=title.strip(),
                     min_name=min_name.strip(),
                     date=write_date.strip(),
                     content=content.strip(),
-                    link=str(link).strip()
+                    link=str(link).strip(),
+                    mark=mark
                 )
 
-                time.sleep(2)
+                await asyncio.sleep(10)

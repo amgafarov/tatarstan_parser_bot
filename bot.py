@@ -11,7 +11,7 @@ __rss_chat_id__ = '-1002000518192'
 __rss_chan_id__ = None
 
 
-async def send_message_func(title: str, min_name: str, date: str, content: str, link: str):
+async def send_message_func(title: str, min_name: str, date: str, content: str, link: str, mark: int):
     global bot
 
     file_name = title[:50].strip() + '.txt'
@@ -24,7 +24,7 @@ async def send_message_func(title: str, min_name: str, date: str, content: str, 
     await bot.send_document(
         chat_id=__rss_chat_id__,
         document=types.FSInputFile(file_path),
-        caption=min_name + '\n\n' + title + '\n\n' + date + '\n\n' + link,
+        caption=min_name + '\n\n' + title + '\n\n' + date + '\n\n' + link + f'\n\nОценка важности: {mark}',
         message_thread_id=__rss_chan_id__
     )
 
@@ -33,5 +33,4 @@ async def send_message_func(title: str, min_name: str, date: str, content: str, 
 
 async def start() -> None:
     dp.include_router(r)
-
     await start_min_parser(send_message_func)
